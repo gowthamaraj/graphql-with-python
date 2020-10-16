@@ -23,6 +23,17 @@ class post(ObjectType):
     title = String()
     user = Field(user)
 
+    def resolve_user(self, info):
+        response = requests.get('https://jsonplaceholder.typicode.com/users')
+        response = response.json()
+        output = {}
+        for item in response:
+            if item["id"] == self.userId:
+                output = item
+                break
+        return json2obj(json.dumps(output))
+
+
 
 class Query(ObjectType):
     users = List(user, id=Int(required=True))
