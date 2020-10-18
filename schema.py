@@ -23,12 +23,12 @@ class post(ObjectType):
     title = String()
     user = Field(user)
 
-    def resolve_user(self, info):
+    def resolve_user(root, context):
         response = requests.get('https://jsonplaceholder.typicode.com/users')
         response = response.json()
         output = {}
         for item in response:
-            if item["id"] == self.userId:
+            if item["id"] == root.userId:
                 output = item
                 break
         return json2obj(json.dumps(output))
@@ -37,12 +37,12 @@ class post(ObjectType):
 
 class Query(ObjectType):
     users = List(user, id=Int(required=True))
-    def resolve_users(self, info, id):
+    def resolve_users(root, context, id):
         response = requests.get('https://jsonplaceholder.typicode.com/users')
         return json2obj(json.dumps(response.json()))
     
     user = Field(user, id=Int(required=True))
-    def resolve_user(self, info, id):
+    def resolve_user(root, context, id):
         response = requests.get('https://jsonplaceholder.typicode.com/users')
         response = response.json()
         output = {}
@@ -53,7 +53,7 @@ class Query(ObjectType):
         return json2obj(json.dumps(output))
 
     post = Field(post, id=Int(required=True))
-    def resolve_post(self, info, id):
+    def resolve_post(root, context, id):
         response = requests.get('https://jsonplaceholder.typicode.com/posts')
         response = response.json()
         output = {}
